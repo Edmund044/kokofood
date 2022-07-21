@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+  nginx:
+    image: nginx:1.15
+    container_name: nginx
+    volumes:
+        - ./:/var/www/html
+        - ./default.conf:/etc/nginx/conf.d/default.conf
+    ports: 
+      - 80:80
+    networks:
+      - currency-networks
+    depends_on:
+      - flask
+  flask: 
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: flask
+    command: gunicorn --workers=3 app.app:app
+    volumes:
+      - ./:/var/www/html
+    networks:
+      currency-networks:
+         aliases:
+         - flask-application   
+
+networks: 
+  currency-networks:
+           
